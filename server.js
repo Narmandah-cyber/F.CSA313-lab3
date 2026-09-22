@@ -29,4 +29,3 @@ res.json({ paid: true });
 
 app.listen(3000, () => console.log('API: http://localhost:3000'));
 
-node server.js
