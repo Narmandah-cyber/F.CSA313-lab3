@@ -15,7 +15,7 @@ k6 v1.2.3 (commit/e4a5a88f7c, go1.24.6, linux/arm64)
 | Зүйл | Утга |
 |---|---|
 | Машин | MacBook Air (Apple Silicon) дээрх Linux орчин, aarch64 |
-| Node.js | v22.23.2, Express 5 |
+| Node.js | Тест ажилласан Linux орчинд v22.23.2 (macOS дээр node v26.7.0), Express 5 |
 | Бай (target) | Зөвхөн локал сервер [`server.js`](server.js) — `http://localhost:3000` |
 | Load тест | Grafana k6 v1.2.3 (AGPL v3) |
 
@@ -53,6 +53,10 @@ k6 run slo-test-fail.js | tee results/fail.txt; echo "exit=$?"            # Ал
 | `http_req_failed{name:pay}` | **5.05%** (47 / 929) |
 | `checks` амжилтын хувь | **98.31%** (2740 / 2787) |
 | Нийт throughput | 2787 хүсэлт, **45.427103/s** |
+
+![k6 version](screenshots/00-k6-version.png)
+
+![Baseline](screenshots/01-baseline.png)
 
 Энэ алхам чухал: зааварт жишээ болгон өгсөн `p(95)<200` босго нь `/cart/add`-ын хувьд бодит утгаас (1.83 мс) 100 дахин сул тул юу ч хэмжихгүй.
 
@@ -138,6 +142,8 @@ exit=0
 | checks | 98.30% (2731 / 2778) | > 90% | ✓ |
 | Нийт хүсэлт | 2778 (45.293498/s) | | |
 
+![PASS](screenshots/02-pass.png)
+
 Дөрвүүлээ хангагдсан тул k6 **exit code 0** буцаасан — CI pipeline дээр build үргэлжилнэ.
 
 ## 6. Алхам 5 — Chaos туршилт
@@ -165,6 +171,8 @@ k6 exit=99
 | cart p95 | 1.76 мс | 1.76 мс |
 | report p95 | 391.31 мс | 391.92 мс |
 
+![Chaos](screenshots/03-chaos.png)
+
 **Бодит availability (ХҮСЭЛТЭЭР):** (5670 − 693) / 5670 ≈ **87.78%** (k6-ийн checks-ээр 87.77%) — SLO (90%) зөрчигдсөн, error budget 567 хүсэлт байхад 693 хүсэлт унасан.
 
 **Юу ажиглагдав:**
@@ -189,6 +197,8 @@ k6 exit=99
   ✓ 'rate<0.08' rate=4.73%
 exit=99
 ```
+
+![FAIL](screenshots/04-fail.png)
 
 `ERRO … thresholds on metrics 'http_req_duration{name:report}' have been crossed` мөр гарч, k6 **exit code 99** буцаасан. CI pipeline яг энэ кодоор build-ийг зогсооно.
 
@@ -216,5 +226,6 @@ exit=99
 | [`slo-test.js`](slo-test.js) | Алхам 4 — 4 SLO threshold (PASS), Алхам 5-д `--duration 2m`-ээр chaos |
 | [`slo-test-fail.js`](slo-test-fail.js) | Алхам 6 — зориуд эвдсэн threshold (FAIL) |
 | [`results/`](results/) | k6-ийн бүтэн текст гаралтууд: baseline-tagged, pass, chaos, fail, k6-version |
+| [`screenshots/`](screenshots/) | Terminal дээрх гаралтын дэлгэцийн зургууд (00–04) |
 
 `node_modules/` нь [`.gitignore`](.gitignore)-д орсон.
